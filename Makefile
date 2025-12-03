@@ -14,7 +14,7 @@ OBJS = \
 	module_mp_cldfra_cb.o          
 
 physics_monan: $(OBJS)
-	ar -ru ./../libphys.a $(OBJS)
+	ar -ru ./../../libphys.a $(OBJS)
 
 # DEPENDENCIES:
 module_cu_gf.monan.o:      \
