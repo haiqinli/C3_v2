@@ -1,62 +1,20 @@
-module module_cu_gf_monan
+module module_cu_c3
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   !! The Grell-Freitas Convective Parameterization - MONAN version
+   !! The Community Convective Cloud (C3) Parameterization
    !!
-   !! ![](https://i.ibb.co/LNqGy3S/logo-Monan-Color-75x75.png)
-   !! ## MONAN
    !!
-   !! Author: Saulo Freitas [SRF] e Georg Grell [GAG]
-   !!
-   !! E-mail: <mailto:saulo.freitas@inpe.br>
-   !!
-   !! Date: 2014 - 2025
-   !!
-   !! Version: 1.0.0
-   !!
-   !! ---
-   !! **Full description**:
+   !! Authors: Saulo Freitas (saulo.freitas@inpe.br) 
+   !!          Georg Grell (georg.a.grell@noaa.gov) 
+   !!          Haiqin Li (haiqin.Li@noaa.gov) 
+   !!          Lisa Bengtsson (lisa.bengtsson@noaa.gov) 
+   !!          Jian-Wen Bao (jian-wen.bao@noaa.gov) 
+   !!          Evelyn Grell (evelyn.grell@noaa.gov)
    !!
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   !!- This convective parameterization is build to attempt                      !
-   !!  a smooth transition to cloud resolving scales as proposed                 !
-   !!  by Arakawa et al (2011, ACP). The scheme is  described                    !
-   !!  in the paper Grell and Freitas (ACP, 2014).                               ! 
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   !! ** History**:     
-   !!- Implemented in GEOS5 GCM by Saulo Freitas (July 2016)                     !
-   !!- Use the following references for this implementation:                     !
-   !!- Freitas et al (2018, JAMES/AGU, https://doi.org/10.1029/2017MS001251)     !
-   !!- Freitas et al (2021, GMD/EGU,   https://doi.org/10.5194/gmd-14-5393-2021) !                                            !
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                         !
-   !! -Adapted for BRAMS 6.0 by Saulo Freitas (November 2021)                    !     
-   !! -Refactoring by Luiz Flavio Rodrigues at 20 December 2021 (Monday)         !
-   !!  Keywords using ; are separeted, some loops receives exit instead goto,    !
-   !!  The identation was fixed and all keywords are lowercase                   !
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
-   !! - Implemented in MPAS/MONAN 1.0 by Saulo Freitas (July 2023)               ! 
-   !! - Refactoring by GCC (INPE) at 20 January 2024 using fprettify and manual  ! 
-   !! - changes according MONAN rules code patterns DTN 01                       !
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
-   !!- Please, contact Saulo Freitas (saulo.freitas@inpe.br) for comments        !
-   !!- questions, bugs, etc.                                                     ! 
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
-   !! ** Licence **:
-   !!
-   !! <img src="https://www.gnu.org/graphics/gplv3-127x51.png width="63">
-   !!
-   !! This program is free software: you can redistribute it and/or modify
-   !! it under the terms of the GNU General Public License as published by
-   !! the  Free  Software  Foundation, either version 3 of the License, or
-   !! (at your option) any later version.
-   !!
-   !! This program is distributed in the hope that it  will be useful, but
-   !! ** WITHOUT  ANY  WARRANTY **;  without  even  the   implied   warranty  of
-   !! **MERCHANTABILITY** or **FITNESS FOR A  PARTICULAR PURPOSE**.  See  the, GNU
-   !! GNU General Public License for more details.
-   !!
-   !! You should have received a copy  of the GNU General  Public  License
-   !! along with this program.  
-   !! If not, see [GNU Public License](https://www.gnu.org/licenses/gpl-3.0.html).
+   !!- Grell and Freitas (2014,ACP,https://doi.org/10.5194/acp-14-5233-2014).    ! 
+   !!- Freitas et al (2018,JAMES,https://doi.org/10.1029/2017MS001251)           !
+   !!- Freitas, Grell and Li (2021,GMD,https://doi.org/10.5194/gmd-14-5393-2021) !
+   !!- Freitas et al (2024,JAMES,https://doi.org/10.1029/2023MS003982            !
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    !
    !
@@ -110,7 +68,7 @@ module module_cu_gf_monan
       ,dcape_threshold
 
    public makeDropletNumber,makeIceNumber,FractLiqF                      &
-      ,coldPoolStart,readGFConvParNML,initModConvParGF,cu_gf_monan_driver&
+      ,coldPoolStart,readGFConvParNML,initModConvParGF,cu_c3_driver&
       ,satur_spec_hum
    !
    !-
@@ -343,7 +301,7 @@ module module_cu_gf_monan
    !---------------------------------------------------------------------------------------------------
    !--- monan driver 
    !---------------------------------------------------------------------------------------------------
-   subroutine cu_gf_monan_driver(    &
+   subroutine cu_c3_driver(    &
                dt                    &
               ,confrq                &
               ,dx_p                  &
@@ -1002,7 +960,7 @@ module module_cu_gf_monan
             !-- set the temp and water vapor anomalies from the sub-grid scale variability 
             call set_Tq_pertub (use_excess,its,ite,itf,xlandi,ztexec,zqexec,cum_ztexec,cum_zqexec)
             !
-            call CUP_GF(its,ite,kts,kte, itf,ktf, mtp, nmp, FSCAV  &
+            call CUP_C3(its,ite,kts,kte, itf,ktf, mtp, nmp, FSCAV  &
                         ,cumulus_type  (plume)            &
                         ,closure_choice(plume)            &
                         ,cum_entr_rate (plume)            &
@@ -1460,10 +1418,10 @@ module module_cu_gf_monan
         endif
       endif
 
-   end subroutine cu_gf_monan_driver
+   end subroutine cu_c3_driver
    !---------------------------------------------------------------------------------------------------
 
-   subroutine CUP_GF (its,ite,kts,kte ,itf,ktf, mtp, nmp &
+   subroutine CUP_C3 (its,ite,kts,kte ,itf,ktf, mtp, nmp &
                      ,fscav             &
                      ,cumulus           &
                      ,ichoice           &
@@ -2491,7 +2449,7 @@ module module_cu_gf_monan
       call free_memory(vec_ok)
       call free_memory(vec_removed)
 
-   end subroutine CUP_GF
+   end subroutine CUP_C3
    !------------------------------------------------------------------------------------
    subroutine cup_dd_edt(cumulus,ierr,us,vs,z,ktop,kbcon,edt,p,pwav,pw,ccn,pwev,edtmax  &
                         ,edtmin,maxens2,edtc,psum2,psumh,rho,aeroevap          &
@@ -11218,7 +11176,7 @@ module module_cu_gf_monan
 ! ierr(i)=7    ==>  ierrc(i)='downdraft is not negatively buoyant ' (bud(i) > 0.)
 ! ierr(i)=18   ==>  ierrc(i)="total normalized condensate too small"
 !---------------------------------------------------------------------------------------------!
-end  module module_cu_gf_monan
+end  module module_cu_c3
 
 
 

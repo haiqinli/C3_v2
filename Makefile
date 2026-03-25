@@ -1,23 +1,23 @@
 .SUFFIXES: .F .o
 
-all: dummy physics_monan
+all: dummy physics_c3
 
 dummy:
-	echo "****** compiling physics_monan ******"
+	echo "****** compiling cu_c3 ******"
 
 OBJS = \
 	modVector.o                    \
 	modConstants.o                 \
 	modGate.o                      \
 	modHenrysLawCts.o              \
-	module_cu_gf.monan.o           \
+	module_cu_c3.o           \
 	module_mp_cldfra_cb.o          
 
-physics_monan: $(OBJS)
+physics_c3: $(OBJS)
 	ar -ru ./../../libphys.a $(OBJS)
 
 # DEPENDENCIES:
-module_cu_gf.monan.o:      \
+module_cu_c3.o:      \
 	modVector.o             \
 	modConstants.o          \
 	modGate.o               \
